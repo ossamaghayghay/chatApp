@@ -4,35 +4,23 @@ import 'package:flutter/material.dart';
 
 
 class AuthFrom extends StatefulWidget {
-  const AuthFrom({required this.submit, Key? key }) : super(key: key);
+  const AuthFrom({required this.submitFunc, required this.isLoading,Key? key }) : super(key: key);
 
-  final void Function(String email,String password,String username,bool isLogin,BuildContext ctx) submit;
+  final Function(String email,String password,String username,bool isLogin) submitFunc;
+  final bool isLoading;
 
-   
-
-
-
-
-  static const String _imageUrl = 'https://tse3.mm.bing.net/th?id=OIP.CDHDsbMAWk9cNcM7qAmAqwHaEo&pid=Api&P=0&w=295&h=184';
+  static const String _imageUrl = 'https://lh3.googleusercontent.com/a-/AOh14GhE5KZT2YnSLen0nbpIHoa0Rr27KLtJ-lnLc6S8yw=s288-p-rw-no';
   static const String _imageUrl2 = 'https://t3.ftcdn.net/jpg/03/55/60/70/360_F_355607062_zYMS8jaz4SfoykpWz5oViRVKL32IabTP.jpg';
-
 
   @override
   State<AuthFrom> createState() => _AuthScreenState();
-
  
-   
 }
 
 class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMixin {
-   
-   
-  
-   
 
   //  late bool isLoading;
    
-
    final formkey=GlobalKey<FormState>();
    
     String email='';
@@ -61,58 +49,55 @@ class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMix
     controlleranimation!.dispose();
     super.dispose();
   }
- 
 // ::::::::::::::::::::::::SUBMIT::::::::::::::::::::::::
- void submit() 
+  submit() 
   {
-   bool? isValid=formkey.currentState!.validate();
+    bool isValid;
+   isValid = formkey.currentState!.validate();
+  //  print(":::::::::::::::::::::::::>$isValid");
    FocusScope.of(context).unfocus();
-
-   if(!isValid)
-   {
-     formkey.currentState!.save();
-      widget.submit(email.trim(),password.trim(),username.trim(),_isLogin,context);
-    
-   }
-  
-  
-  
-  
+     if(isValid)
+    {
+      formkey.currentState!.save();
+      widget.submitFunc(password.trim(),email.trim(),password.trim(),_isLogin,);
+      // print("Username:::IS::::"+username);
+      // print("email:::IS::::"+email);
+      // print("password:::IS::::"+password);
+     }
   }
-
   @override
   Widget build(BuildContext context) {
     final deviceSize=  MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.blueGrey,
       body: SingleChildScrollView(
         child: Form(
-          // key: _formkey,
+          key:formkey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children:[ 
             Transform.rotate(
-              angle: 4/63,
+              angle: 4/88,
               child: Container(
-                padding: const EdgeInsets.all(40),
-                margin: const EdgeInsets.only(top:60,bottom: 40),
-                child:  const Text('MOVIC CHAT',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Color.fromARGB(255, 230, 230, 230)),),
+                padding: const EdgeInsets.all(60),
+                margin: const EdgeInsets.only(top:60,bottom: 20,right: 15,left: 15),
+                // child:  const Text('MOVIC CHAT',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Color.fromARGB(255, 8, 10, 104)),textAlign: TextAlign.start),
                 decoration:  BoxDecoration(
                   image: const DecorationImage(image: NetworkImage(AuthFrom._imageUrl),scale: 0.1,filterQuality: FilterQuality.high ,fit: BoxFit.fill) ,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
               const SizedBox(height: 10,),
               const Text('Welcome,',style:  TextStyle(fontSize: 26,fontWeight: FontWeight.bold),),
               const SizedBox(height: 6,),
-              const Text('Sign in to continue!',style: TextStyle(fontSize: 26,color: Color.fromARGB(255, 39, 22, 43),fontWeight: FontWeight.bold),),
-                    
+              const Text('Sign in to continue!',style: TextStyle(fontSize: 26,color: Color.fromARGB(255, 39, 22, 43),fontWeight: FontWeight.bold),),                    
             Container(
              padding: const EdgeInsets.all(10),
               margin: const EdgeInsets.all(10),
               decoration:  BoxDecoration(
-                borderRadius: BorderRadius.circular(13),
-                image: const DecorationImage(image: NetworkImage(AuthFrom._imageUrl2),scale: 0.1,filterQuality: FilterQuality.high ,fit: BoxFit.fill)
+              borderRadius: BorderRadius.circular(13),
+              image: const DecorationImage(image: NetworkImage(AuthFrom._imageUrl2),scale: 0.1,filterQuality: FilterQuality.high ,fit: BoxFit.fill)
               ),
             child: 
                Column(
@@ -120,30 +105,25 @@ class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMix
                     if(!_isLogin)
                       TextFormField(
                       key: const ValueKey('username'),
-                      style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                         icon:Icon(Icons.people,color: Colors.blue,),
-                        label:Text('Full Name : ',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                        label:Text('Full Name : ',style: TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),),
                         hintText: 'Enter Full Name ',
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: TextStyle(color: Colors.black),
                       ),
 
                        onSaved: ((newValue) {
                         username=newValue!;
                       }),
                       validator: (val){
-                         Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-                         RegExp regex = RegExp(pattern.toString());
-                        if(val!.isEmpty || !regex.hasMatch(val))
+                        if(val!.isEmpty)
                         {
-                          return 'Invalid Email' ;
-                        }return null;
+                          return 'Field Is Empty' ;
+                        }
+                        else{return null;};
                       },
-
-
-
-
                     ),
                      TextFormField(
                       key: const ValueKey('email'),
@@ -151,53 +131,47 @@ class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMix
                         email=newValue!;
                       }),
                       validator: (val){
-                        if(val!.isEmpty || !val.contains('@gmail.com'))
+                        if(val!.isEmpty || !val.contains('@'))
                         {
                           return 'Invalid Email' ;
-                        }return null;
+                        }
+                        else{return null;}
                       },
-                      style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),
                       keyboardType: TextInputType.emailAddress,
                       decoration:const  InputDecoration(
                         icon: Icon(Icons.email,color: Colors.blue,),
-                        label: Text('E-mail : ',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                        label: Text('E-mail : ',style: TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),),
                         hintText: 'Enter E-mail ',
-                        fillColor: Colors.white,
-                        hintStyle: TextStyle(color: Colors.white),
+                        fillColor: Colors.black,
+                        hintStyle: TextStyle(color: Colors.black),
                       ),
                     ),
-                     
                         TextFormField(
                         key: const ValueKey('password'),
                         controller: passwordController,
                         obscureText: true,
-                        style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),
                         keyboardType: TextInputType.visiblePassword,
                         decoration:  const InputDecoration(
                           icon:  Icon(Icons.password,color: Colors.blue,),
-                          label:  Text('Password : ',style:  TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                          label:  Text('Password : ',style:  TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),),
                           hintText: 'Enter Password  ',
-                          hintStyle:   TextStyle(color: Colors.white),
+                          hintStyle:   TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                           suffixIcon:Icon(Icons.visibility),
                             ),        
                         validator: ( value) {
-                          Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-                           RegExp regex = RegExp(pattern.toString());
-                          if (value!.isEmpty ) {
-                          return 'Password is required';
-                          }else if (!regex.hasMatch(value) || value.length<5 ) {
-                            return 'Enter valid password';
+                          if (value!.isEmpty || value.length<5) {
+                             return 'Password is required';
                           } else{return null;}
-                          
                           },
-                                  
                           onSaved: (val)
                           {
                            password=val!;
                           },
                         ),
                       
-                    if(!_isLogin)
+                    if(!_isLogin )
                       AnimatedContainer(
                         duration:const Duration(milliseconds: 300) ,
                         curve: Curves.easeIn,
@@ -208,19 +182,18 @@ class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMix
                         child: TextFormField(
                           
                         key: const ValueKey('confirmPassword'),
-                        style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),
                         obscureText: true,
                         keyboardType:  TextInputType.visiblePassword,
                         decoration:  const InputDecoration(
                         
                           icon:Icon(Icons.password,color: Colors.blue,),
-                          label:Text('Confirm Password : ',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                          label:Text('Confirm Password : ',style: TextStyle(color: Color.fromARGB(255, 0, 0, 0),fontWeight: FontWeight.bold),),
                           hintText: 'Confirm Password  ',
-                          hintStyle: TextStyle(color:  Color.fromARGB(255, 239, 239, 239)),
-                          suffixIcon: 
-                            Icon(Icons.visibility),
+                          hintStyle: TextStyle(color:  Color.fromARGB(255, 0, 0, 0)),
+                          suffixIcon: Icon(Icons.visibility),
                             ),
-                          validator: !_isLogin? 
+                          validator: 
                            (val)
                            {
                              if(val!=passwordController.text)
@@ -231,13 +204,15 @@ class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMix
                              {
                                 return null;
                              }
-                           }:null,
+                           },
                         ),
                       ),
                       //  if(controller.isLoading.value) const CircularProgressIndicator(color: Colors.purple,),
-                       SizedBox(
+                      
+                      if(!widget.isLoading)
+                      SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
+                          child:ElevatedButton(
                           // key: formkey,
                           style:ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(Colors.blue),
@@ -248,6 +223,11 @@ class _AuthScreenState extends State<AuthFrom> with SingleTickerProviderStateMix
                           child:  Text(!_isLogin ?'Sing Up':'Login',style:const TextStyle(color:Color.fromARGB(255, 250, 250, 250))),
                         ),
                       ),
+                      if (widget.isLoading)
+                      const CircularProgressIndicator(
+                          color: Colors.blueAccent,strokeWidth: 3,
+                          ),
+                      if (!widget.isLoading)
                       TextButton(
                       child:  Text('${!_isLogin? 'LOGIN':'SIGNUP'} INSTEAD',style: const TextStyle(color: Color.fromARGB(255, 10, 10, 164),fontWeight: FontWeight.bold)),
                       onPressed:(){
